@@ -8,7 +8,7 @@ export async function createShortURL(req, res) {
     const newRandom = await connection.query(`SELECT MD5(random()::text)`);
     
     const newUrlPromise = await connection.query(`
-      INSERT INTO "createdUrls" ("userId", "longUrl", "shortUrl")
+      INSERT INTO "createdUrls" ("userId", "url", "shortUrl")
       VALUES ($1, $2, $3);
     `, [ userId, url, newRandom.rows[0].md5 ]);
     
