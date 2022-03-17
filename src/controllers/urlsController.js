@@ -1,9 +1,21 @@
 import { connection } from '../database.js';
 
 export async function createShortURL(req, res) {
-  const url = req.body;
+  const userId = res.locals.user.id;
+  const { url } = req.body;
 
-  console.log('reached createURL: ', url);
+  try {
+    const newRandom = await connection.query(`SELECT MD5(random()::text)`);
+    
+    const newUrlPromise = await connection.query(`
+      INSERT INTO "createdUrls" ("userId", "longUrl", "shortUrl")
+      VALUES ($1, $2, $3);
+    `, [ userId, url, newRandom.rows[0].md5 ]);
+    
+    res.status(201).send({ shortUrl: newRandom.rows[0].md5 });
 
-  res.sendStatus(501);  
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
 }
