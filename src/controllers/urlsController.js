@@ -12,8 +12,29 @@ export async function createShortURL(req, res) {
       VALUES ($1, $2, $3);
     `, [ userId, url, newRandom.rows[0].md5 ]);
     
-    res.status(201).send({ shortUrl: newRandom.rows[0].md5 });
+    return res.status(201).send({ shortUrl: newRandom.rows[0].md5 });
 
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+export async function searchUrlId(req, res) {
+  const targetUrlId = req?.params.id;
+
+  try {
+    const { rows: foundUrl } = await connection.query(`
+      SELECT * FROM "createdUrls" WHERE id=$1
+    `, [targetUrlId]);
+
+    if (!foundUrl[0]) {
+      return res.sendStatus(404);
+    }
+    
+    return res.status(200).send( { id: foundUrl[0].id, shortUrl: foundUrl[0].shortUrl, url: foundUrl[0].url });
+    
+    
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

@@ -1,5 +1,6 @@
-import { createShortURL } from "./urlsController.js";
+import { createShortURL, searchUrlId } from "./urlsController.js";
 
 export {
-  createShortURL
+  createShortURL,
+  searchUrlId
 };
